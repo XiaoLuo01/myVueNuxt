@@ -25,10 +25,27 @@ export default {
   buildModules: [],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
-  modules: [],
+  modules: ["@nuxtjs/axios", "@nuxtjs/proxy"],
+
+  // See https://github.com/nuxt-community/axios-module#options
+  axios: {
+    proxy: true,
+    prefix: "/api/",
+    credentials: true
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
     transpile: [/^element-ui/]
+  },
+  // 跨域代理
+  proxy: {
+    "/api/": {
+      target: "http://localhost:7001",
+      secure: false,
+      pathRewrite: {
+        "^/api": ""
+      }
+    }
   }
 };
