@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login-container">
     <el-form class="login-form" >
       <el-form-item props="email">
         <span>

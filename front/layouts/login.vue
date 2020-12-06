@@ -1,10 +1,7 @@
 <template>
   <div>
-    <div>
-      导航
-    </div>
     <nuxt></nuxt>
-    <div>footer</div>
+    <!-- <div>footer</div> -->
   </div>
 </template>
 
@@ -14,6 +11,28 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus">
+.login-container 
+  width 100%
+  min-height 100%
+  .login-form
+    width 520px
+    padding 60px 0
+    margin 0 auto
+    overflow hidden
+    .title-container 
+      text-align center
+      margin-bottom: 20px;
+      img 
+        width: 200px;
+    .captcha-container
+      width: 400px;
+      position: relative;
+      .captcha 
+        position: absolute;
+        right: -110px;
+        img 
+          width: 90px;
+          height: 40px;
+          cursor: pointer;
 </style>
