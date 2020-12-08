@@ -1,28 +1,34 @@
 <template>
   <div class="login-container">
-    <el-form class="login-form" label-width="100px" :rules="rules" :model="form" ref="registerForm">
+    <el-form class="login-form" status-icon label-width="100px" :rules="rules" :model="form" ref="registerForm">
       <div class="title-container">
         <img src="/logo.png" alt="">
       </div>
+
       <el-form-item prop="email" label="邮箱">
         <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
       </el-form-item>
+      
        <el-form-item prop="captcha" label="验证码" class="captcha-container">
          <div class="captcha">
            <img :src="code.captcha" alt="" @click="registerCaptcha">
          </div>
         <el-input v-model="form.captcha" placeholder="请输入验证码"></el-input>
       </el-form-item>
+
       <el-form-item prop="nickname" label="昵称">
         <el-input v-model="form.nickname" placeholder="请输入昵称"></el-input>
       </el-form-item>
+
       <el-form-item prop="password" label="密码">
-        <el-input v-model="form.password" placeholder="请输入密码"></el-input>
+        <el-input v-model="form.password" placeholder="请输入密码" type="password"></el-input>
       </el-form-item>
+
       <el-form-item prop="repassword" label="确认密码">
-        <el-input v-model="form.repassword" placeholder="请再次输入密码"></el-input>
+        <el-input v-model="form.repassword" placeholder="请再次输入密码" type="password"></el-input>
       </el-form-item>
-      <el-form-item prop="" label=" ">
+
+      <el-form-item prop="" label="">
         <el-button type="primary" @click.native.prevent="handleRegister">注册</el-button>
       </el-form-item>
     </el-form>
@@ -30,16 +36,17 @@
 </template>
 
 <script>
+import md5 from 'md5'
 export default {
   layout:'login',
   data() {
     return {
       form:{
-        email:'',
+        email:'1428620591@qq.com',
         captcha:'',
-        nickname:'',
-        password:'',
-        repassword:'',
+        nickname:'Violet',
+        password:'123456',
+        repassword:'123456',
       },
       rules:{
         email:[
@@ -82,8 +89,9 @@ export default {
             password: md5(this.form.password),
             captcha: this.form.captcha
           }
-          let ret = this.$http.post('/use/register',data)
-          if(code == 0) {
+          let ret = await this.$http.post('/user/register',data)
+          console.log(ret);
+          if(ret.code == 0) {
             // 注册成功
             this.$alert('注册成功','成功',{
               confirmButtonText:'去登录',

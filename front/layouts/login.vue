@@ -17,14 +17,12 @@ export default {
   min-height 100%
   .login-form
     width 520px
-    padding 60px 0
+    padding 20px 0
     margin 0 auto
     overflow hidden
     .title-container 
       text-align center
       margin-bottom: 20px;
-      img 
-        width: 200px;
     .captcha-container
       width: 400px;
       position: relative;
