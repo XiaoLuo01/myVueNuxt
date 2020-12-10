@@ -5,10 +5,11 @@ module.exports = app => {
 
   const UserSchema = new Schema(
     {
-      email: { type: 'String', required: true },
-      nickname: { type: 'String', required: true },
-      password: { type: 'String', required: true },
-      avator: { type: 'String', required: false, default: '/user.png' },
+      __v: { type: Number, select: false },
+      email: { type: String, required: true },
+      nickname: { type: String, required: true },
+      password: { type: String, required: true, select: false },
+      avator: { type: String, required: false, default: '/user.png' },
     },
     { timestamps: true }
   )

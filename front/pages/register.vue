@@ -82,7 +82,6 @@ export default {
       this.$refs.registerForm.validate(async valid => {
         if(valid) {
           console.log('校验成功');
-          // TODO 发送请求
           let data = {
             email: this.form.email,
             nickname: this.form.nickname,

@@ -5,9 +5,13 @@
  */
 module.exports = app => {
   const { router, controller } = app
+  const jwt = app.middleware.jwt({ app })
+
   router.get('/', controller.home.index)
+
   // 验证码接口
   router.get('/captcha', controller.util.captcha)
+  router.get('/sendcode', controller.util.sendcode)
 
   router.group({ name: 'user', prefix: '/user' }, router => {
     const { register, login, verify, info } = controller.user
@@ -15,6 +19,6 @@ module.exports = app => {
     router.post('/register', register)
     router.post('/login', login)
     router.get('/verify', verify)
-    router.get('/info', info)
+    router.get('/info', jwt, info)
   })
 }

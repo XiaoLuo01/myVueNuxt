@@ -29,6 +29,10 @@ export default {
       .captcha 
         position: absolute;
         right: -110px;
+        .el-button 
+          width: 90px;
+          padding: 0;
+          line-height: 40px;
         img 
           width: 90px;
           height: 40px;
