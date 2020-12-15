@@ -12,8 +12,10 @@ module.exports = app => {
   // 验证码接口
   router.get('/captcha', controller.util.captcha)
   router.get('/sendcode', controller.util.sendcode)
+  // 文件上传接口
   router.post('/uploadfile', controller.util.uploadfile)
   router.post('/mergefile', controller.util.mergefile)
+  router.post('/checkfile', controller.util.checkfile)
 
   router.group({ name: 'user', prefix: '/user' }, router => {
     const { register, login, verify, info } = controller.user

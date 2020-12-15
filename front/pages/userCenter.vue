@@ -223,7 +223,19 @@ export default {
       // const hash1 = await this.calculateHashIdle()
       const hash = await this.calculateHashSimple()
       this.hash = hash
-      // console.log(hash)
+
+      // 上传文件之前问一下后端文件是否上传过，如果没有，是否有存在的切片
+      const {
+        data: { uploaded, uploadedList },
+      } = await this.$http.post('/checkfile', {
+        hash: this.hash,
+        ext: this.file.name.split('.').pop(),
+      })
+
+      if (uploaded) {
+        // 已经存在，直接秒传
+        return this.$message.success('秒传成功！')
+      }
 
       this.chunks = chunks.map((chunk, index) => {
         // 切片的名字 hash+index
@@ -233,22 +245,24 @@ export default {
           index,
           hash,
           chunk: chunk.file,
-          progress: 0,
+          // 设置进度条，已经上传的设置为100
+          progress: uploadedList.indexOf(name) > -1 ? 100 : 0,
         }
       })
 
-      await this.uploadChunks()
+      await this.uploadChunks(uploadedList)
     },
-    async uploadChunks() {
+    async uploadChunks(uploadedList = []) {
       const requests = this.chunks
+        .filter((chunk) => uploadedList.indexOf(chunk.name) == -1)
         .map((chunk, index) => {
           const form = new FormData()
           form.append('chunk', chunk.chunk)
           form.append('name', chunk.name)
           form.append('hash', chunk.hash)
-          return form
+          return { form, index: chunk.index }
         })
-        .map((form, index) =>
+        .map(({ form, index }) =>
           this.$http.post('/uploadfile', form, {
             onUploadProgress: (progress) => {
               // 每一个区块有自己的进度条
