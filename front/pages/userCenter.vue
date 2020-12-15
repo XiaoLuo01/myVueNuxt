@@ -218,6 +218,10 @@ export default {
       })
     },
     async uploadFile() {
+      if (!this.file) {
+        return
+      }
+
       const chunks = this.createFileChunk(this.file)
       // const hash = await this.calculateHashWorker()
       // const hash1 = await this.calculateHashIdle()
@@ -262,19 +266,10 @@ export default {
           form.append('hash', chunk.hash)
           return { form, index: chunk.index }
         })
-        .map(({ form, index }) =>
-          this.$http.post('/uploadfile', form, {
-            onUploadProgress: (progress) => {
-              // 每一个区块有自己的进度条
-              this.chunks[index].progress = Number(
-                ((progress.loaded / progress.total) * 100).toFixed(2)
-              )
-            },
-          })
-        )
 
       // TODO 并发数控制
-      await Promise.all(requests)
+      // await Promise.all(requests)
+      await this.sendRequest(requests)
       await this.mergeRequest()
 
       // if (!(await this.isImage(this.file))) {
@@ -282,6 +277,45 @@ export default {
       // } else {
       //   console.log('格式正确')
       // }
+    },
+    async sendRequest(chunks, limit = 3) {
+      return new Promise((resolve, reject) => {
+        const len = chunks.length
+        let counter = 0
+
+        const start = async () => {
+          // 获取一个chunk
+          const task = chunks.shift()
+          if (task) {
+            const { form, index } = task
+            await this.$http.post('/uploadfile', form, {
+              onUploadProgress: (progress) => {
+                // 每一个区块有自己的进度条
+                this.chunks[index].progress = Number(
+                  ((progress.loaded / progress.total) * 100).toFixed(2)
+                )
+              },
+            })
+
+            if (counter == len - 1) {
+              // 这是最后一个任务
+              resolve()
+            } else {
+              counter++
+              // 启动下一个任务
+              start()
+            }
+          }
+        }
+
+        while (limit > 0) {
+          // 启动任务
+          setTimeout(() => {
+            start()
+          }, Math.random() * 2000)
+          limit -= 1
+        }
+      })
     },
     async mergeRequest() {
       this.$http.post('/mergefile', {
