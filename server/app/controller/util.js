@@ -2,6 +2,7 @@
 const svgCaptcha = require('svg-captcha')
 const BaseController = require('./base')
 const fse = require('fs-extra')
+const path = require('path')
 
 class UtilController extends BaseController {
   async captcha() {
@@ -47,11 +48,25 @@ class UtilController extends BaseController {
   async uploadfile() {
     const { ctx } = this
     const file = ctx.request.files[0]
-    // const { name } = ctx.request.body
+    const { hash, name } = ctx.request.body
+    const chunkPath = path.resolve(this.config.UPLOAD_DIR, hash)
 
-    await fse.move(file.filepath, this.config.UPLOAD_DIR + '/' + file.filename)
+    // 没有就要先创建这个目录
+    if (!fse.existsSync(chunkPath)) {
+      fse.mkdir(chunkPath)
+    }
+
+    await fse.move(file.filepath, `${chunkPath}/${name}`)
+    this.message('切片上传成功')
+  }
+
+  async mergefile() {
+    const { ext, hash, size } = this.ctx.request.body
+    // 文件最终合并的路径
+    const filePath = path.resolve(this.config.UPLOAD_DIR, `${hash}.${ext}`)
+    await this.ctx.service.tools.mergeFile(filePath, hash, size)
     this.success({
-      url: `/public/${file.filename}`,
+      url: `/public/${hash}.${ext}`,
     })
   }
 }

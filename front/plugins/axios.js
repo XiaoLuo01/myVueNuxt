@@ -3,7 +3,7 @@ import axios from "axios";
 import { MessageBox } from "element-ui";
 
 const service = axios.create({
-  timeout: 5000,
+  // timeout: 5000,
   baseURL: "api"
 });
 
