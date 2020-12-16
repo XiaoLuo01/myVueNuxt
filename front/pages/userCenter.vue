@@ -264,7 +264,7 @@ export default {
           form.append('chunk', chunk.chunk)
           form.append('name', chunk.name)
           form.append('hash', chunk.hash)
-          return { form, index: chunk.index }
+          return { form, index: chunk.index, error: 0 }
         })
 
       // TODO 并发数控制
@@ -282,28 +282,48 @@ export default {
       return new Promise((resolve, reject) => {
         const len = chunks.length
         let counter = 0
+        let isStop = false
 
         const start = async () => {
+          if (isStop) {
+            return
+          }
           // 获取一个chunk
           const task = chunks.shift()
           if (task) {
             const { form, index } = task
-            await this.$http.post('/uploadfile', form, {
-              onUploadProgress: (progress) => {
-                // 每一个区块有自己的进度条
-                this.chunks[index].progress = Number(
-                  ((progress.loaded / progress.total) * 100).toFixed(2)
-                )
-              },
-            })
 
-            if (counter == len - 1) {
-              // 这是最后一个任务
-              resolve()
-            } else {
-              counter++
-              // 启动下一个任务
-              start()
+            try {
+              await this.$http.post('/uploadfile', form, {
+                onUploadProgress: (progress) => {
+                  // 每一个区块有自己的进度条
+                  this.chunks[index].progress = Number(
+                    ((progress.loaded / progress.total) * 100).toFixed(2)
+                  )
+                },
+              })
+
+              if (counter == len - 1) {
+                // 这是最后一个任务
+                resolve()
+              } else {
+                counter++
+                // 启动下一个任务
+                start()
+              }
+            } catch (err) {
+              this.chunks[index].progress = -1
+              // 小于3次尝试重新请求
+              if (task.error < 3) {
+                task.error++
+                // 把任务又重新放回去，继续启动
+                chunks.unshift(task)
+                start()
+              } else {
+                // 已经错误了3次，结束整个
+                isStop = true
+                reject()
+              }
             }
           }
         }
