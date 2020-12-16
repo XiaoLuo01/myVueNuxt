@@ -1,20 +1,72 @@
 <template>
-  <div>
-    <Nuxt />
-  </div>
+  <el-container>
+    <el-header>
+      <el-menu mode="horizontal">
+        <el-menu-item index="0">
+          <img src="./../static/logo.png" alt="" />
+        </el-menu-item>
+
+        <el-menu-item>
+          <nuxt-link to="/">首页</nuxt-link>
+        </el-menu-item>
+
+        <template v-if="userInfo.id">
+          <el-menu-item>
+            <a href="">退出</a>
+          </el-menu-item>
+
+          <el-menu-item>
+            <nuxt-link to="/userCenter">{{ userInfo.nickname }}</nuxt-link>
+          </el-menu-item>
+
+          <el-menu-item>
+            <nuxt-link to="/editor/new">写文章</nuxt-link>
+          </el-menu-item>
+        </template>
+
+        <template v-if="!userInfo.id">
+          <el-menu-item>
+            <nuxt-link to="/register">注册</nuxt-link>
+          </el-menu-item>
+
+          <el-menu-item>
+            <nuxt-link to="/login">登录</nuxt-link>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </el-header>
+    <el-main>
+      <Nuxt />
+    </el-main>
+    <el-footer></el-footer>
+  </el-container>
 </template>
+
+<script>
+export default {
+  mounted() {
+    this.getUserInfo()
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.user
+    },
+  },
+  methods: {
+    async getUserInfo() {
+      const token = localStorage.getItem('token')
+      if (token) {
+        this.$store.dispatch('user/detail')
+      }
+    },
+  },
+}
+</script>
 
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
