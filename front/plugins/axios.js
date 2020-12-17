@@ -4,7 +4,7 @@ import { MessageBox } from "element-ui";
 
 const service = axios.create({
   // timeout: 5000,
-  baseURL: "api"
+  baseURL: "/api"
 });
 
 export default ({ store, redirect }) => {

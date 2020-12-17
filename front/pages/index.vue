@@ -1,9 +1,25 @@
 <template>
-  <div class="container"></div>
+  <div class="kkb-container">
+    <VirtualList :listData="articals"></VirtualList>
+  </div>
 </template>
 
 <script>
-export default {}
+import VirtualList from '~/components/VirtualList.vue'
+export default {
+  components: { VirtualList },
+  data() {
+    return {
+      articals: [],
+    }
+  },
+  async mounted() {
+    let ret = await this.$http.get('/artical')
+    if (ret.code == 0) {
+      this.articals = ret.data
+    }
+  },
+}
 </script>
 
 <style>

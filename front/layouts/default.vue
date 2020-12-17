@@ -3,33 +3,35 @@
     <el-header>
       <el-menu mode="horizontal">
         <el-menu-item index="0">
-          <img src="./../static/logo.png" alt="" />
+          <img class="logo" src="./../static/logo.png" alt="" />
         </el-menu-item>
 
-        <el-menu-item>
+        <el-menu-item index="1">
           <nuxt-link to="/">首页</nuxt-link>
         </el-menu-item>
 
         <template v-if="userInfo.id">
-          <el-menu-item>
-            <a href="">退出</a>
+          <el-menu-item index="3" class="pull-right">
+            <a href="" @click="logout">退出</a>
           </el-menu-item>
 
-          <el-menu-item>
-            <nuxt-link to="/userCenter">{{ userInfo.nickname }}</nuxt-link>
+          <el-menu-item index="4" class="pull-right">
+            <UserDisplay :user="userInfo"> </UserDisplay>
           </el-menu-item>
 
-          <el-menu-item>
-            <nuxt-link to="/editor/new">写文章</nuxt-link>
+          <el-menu-item index="3" class="pull-right">
+            <nuxt-link to="/editor/new">
+              <el-button type="primary">写文章</el-button>
+            </nuxt-link>
           </el-menu-item>
         </template>
 
         <template v-if="!userInfo.id">
-          <el-menu-item>
+          <el-menu-item index="2" class="pull-right">
             <nuxt-link to="/register">注册</nuxt-link>
           </el-menu-item>
 
-          <el-menu-item>
+          <el-menu-item index="3" class="pull-right">
             <nuxt-link to="/login">登录</nuxt-link>
           </el-menu-item>
         </template>
@@ -43,7 +45,9 @@
 </template>
 
 <script>
+import UserDisplay from '~/components/UserDisplay.vue'
 export default {
+  components: { UserDisplay },
   mounted() {
     this.getUserInfo()
   },
@@ -53,6 +57,10 @@ export default {
     },
   },
   methods: {
+    logout() {
+      localStorage.removeItem('token')
+      this.$store.commit('user/LOGOUT')
+    },
     async getUserInfo() {
       const token = localStorage.getItem('token')
       if (token) {
@@ -74,41 +82,31 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  background: #eee;
 }
-
+.pull-right {
+  float: right !important;
+}
 *,
-*::before,
-*::after {
+*:before,
+*:after {
   box-sizing: border-box;
   margin: 0;
 }
-
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
+.logo {
+  height: 37px;
+}
+a {
   text-decoration: none;
-  padding: 10px 30px;
 }
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
+.kkb-container {
+  width: 980px;
+  height: 80vh;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
 }
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+.el-menu--horizontal > .el-menu-item.is-active {
+  border: none;
 }
 </style>

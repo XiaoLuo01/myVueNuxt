@@ -73,6 +73,17 @@ console.log(name)
         content: this.content,
         compileContent: this.compileContent, // 显示只读取这一个
       })
+
+      if (ret.code == 0) {
+        this.$notify({
+          title: '创建成功',
+          type: 'success',
+          message: `文章《${ret.data.title}》创建成功`,
+        })
+        setTimeout(() => {
+          this.$router.push({ path: '/article/' + ret.data.id })
+        })
+      }
     },
     bindEvent() {
       this.$refs.editor.addEventListener('paste', async (e) => {
