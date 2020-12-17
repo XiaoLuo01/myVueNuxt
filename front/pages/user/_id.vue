@@ -2,16 +2,15 @@
   <div class="kkb-container">
     <h1>用户中心</h1>
     <el-tabs v-model="activeName">
-      <el-tab-pane :label='"关注"+following.length' name="following">
+      <el-tab-pane :label="'关注' + following.length" name="following">
         <div v-for="user in following" :key="user._id">
           <UserDisplay :user="user"></UserDisplay>
         </div>
       </el-tab-pane>
-      <el-tab-pane :label='"粉丝"+followers.length' name="followers">
+      <el-tab-pane :label="'粉丝' + followers.length" name="followers">
         <div v-for="user in followers" :key="user._id">
-            <UserDisplay :user="user"></UserDisplay>
-          </div>
-        </el-tab-pane>
+          <UserDisplay :user="user"></UserDisplay>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
